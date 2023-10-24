@@ -1,6 +1,6 @@
 package com.sec.config;
 
-import com.sec.security.CustomAuthenticationProvider;
+import com.sec.security.CustomAuthenticationProviderV1;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,9 +14,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 public class ProjectConfigV1 {
 
-    private final CustomAuthenticationProvider authenticationProvider;
+    private final CustomAuthenticationProviderV1 authenticationProvider;
 
-    public ProjectConfigV1(CustomAuthenticationProvider authenticationProvider) {
+    public ProjectConfigV1(CustomAuthenticationProviderV1 authenticationProvider) {
         this.authenticationProvider = authenticationProvider;
     }
 
