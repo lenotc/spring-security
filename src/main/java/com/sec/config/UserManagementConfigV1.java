@@ -21,7 +21,6 @@ public class UserManagementConfigV1 {
         return userDetailService;
     }
 
-    @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }

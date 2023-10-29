@@ -2,8 +2,6 @@ package com.sec.config;
 
 import com.sec.handlers.CustomAuthenticationFailureHandler;
 import com.sec.handlers.CustomAuthenticationSuccessHandler;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -11,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
 public class ProjectConfigV10 {
 
     private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
@@ -22,7 +19,6 @@ public class ProjectConfigV10 {
         this.authenticationFailureHandler = authenticationFailureHandler;
     }
 
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 //        http.formLogin(c -> c.defaultSuccessUrl("/home", true));
 
@@ -37,7 +33,6 @@ public class ProjectConfigV10 {
         return http.build();
     }
 
-    @Bean
     public UserDetailsService uds() {
         var uds = new InMemoryUserDetailsManager();
 
