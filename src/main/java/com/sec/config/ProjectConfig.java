@@ -2,35 +2,39 @@ package com.sec.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 
 @Configuration
 public class ProjectConfig {
+
     @Bean
     public UserDetailsService userDetailsService() {
-        var m = new InMemoryUserDetailsManager();
+        var manager = new InMemoryUserDetailsManager();
+
         var user1 = User.withUsername("john")
                 .password("12345")
                 .roles("ADMIN")
                 .build();
 
-        var user2 = User.withUsername("jane")
+        var user2 = User.withUsername("bill")
                 .password("12345")
-                .authorities("ROLE_MANAGER")
+                .roles("MANAGER")
                 .build();
 
-        m.createUser(user1);
-        m.createUser(user2);
-        return m;
+        manager.createUser(user1);
+        manager.createUser(user2);
 
+        return manager;
     }
 
     @Bean
@@ -40,17 +44,59 @@ public class ProjectConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http.httpBasic(Customizer.withDefaults());
 
-
-        String expression = "hasAuthority('read') and !hasAuthority('delete')";
         http.authorizeHttpRequests(
-                c -> c.anyRequest()
-//                        .hasRole("ADMIN")
-                        .access(new WebExpressionAuthorizationManager(
-                                "T(java.time.LocalTime).now().isAfter(T(java.time.LocalTime).of(12, 0))"))
+                c -> c.requestMatchers(new RegexRequestMatcher(".*/[us|uk|ca]+/[en|fr].*", HttpMethod.GET.name()))
+                        .authenticated()
+                        .anyRequest().hasAuthority("premium")
         );
+
+        http.csrf(
+                AbstractHttpConfigurer::disable
+        );
+
 
         return http.build();
     }
 }
+
+
+/**
+ * http.authorizeHttpRequests(
+ *                 c -> c.requestMatchers("/email/{email:.*(?:.+@.+\\.com)}").permitAll()
+ *                         .anyRequest().denyAll()
+ *         );
+ *
+ * */
+
+
+/**
+ *
+ * http.authorizeHttpRequests(
+ *                 c -> c.requestMatchers( "/product/{code:^[0-9]*$}")
+ *                         .permitAll()
+ *                         .anyRequest()
+ *                         .denyAll()
+ *         );
+ * */
+
+/**
+ *
+ * c -> c.requestMatchers("/a/b/**").authenticated()
+ *                         .anyRequest().permitAll()
+ *
+ * */
+
+
+
+/**
+ *
+ * c -> c.requestMatchers(HttpMethod.GET, "/a")
+ *                         .authenticated()
+ *                         .requestMatchers(HttpMethod.POST, "/a")
+ *                         .permitAll()
+ *                         .anyRequest()
+ *                         .denyAll()
+ * */
